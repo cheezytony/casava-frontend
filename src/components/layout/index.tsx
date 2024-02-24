@@ -25,10 +25,11 @@ export const Divider: React.FC<DividerProps> = ({
 };
 
 export interface WidthProps extends React.HTMLAttributes<HTMLDivElement> {
-  className?: string;
   max?: string | number;
   min?: string | number;
   width?: string | number;
+  xAuto?: boolean;
+  yAuto?: boolean;
 }
 
 export const Width: React.FC<React.PropsWithChildren<WidthProps>> = ({
@@ -36,10 +37,17 @@ export const Width: React.FC<React.PropsWithChildren<WidthProps>> = ({
   max,
   min,
   width = '100%',
+  xAuto,
+  yAuto,
   ...props
 }) => {
+  const xMargin = xAuto ? 'auto' : undefined;
+  const yMargin = yAuto ? 'auto' : undefined;
   return (
-    <div {...props} style={{ maxWidth: max, minWidth: min, width }}>
+    <div
+      {...props}
+      style={{ maxWidth: max, minWidth: min, width, marginInline: xMargin, marginBlock: yMargin}}
+    >
       {children}
     </div>
   );

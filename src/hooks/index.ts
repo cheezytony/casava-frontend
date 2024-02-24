@@ -3,6 +3,7 @@ import React from 'react';
 export * from './auth';
 export * from './form';
 export * from './onboarding';
+export * from './payment';
 
 export const useDisclosure = (defaultIsOpen: boolean = false) => {
   const [isOpen, setIsOpen] = React.useState(defaultIsOpen);

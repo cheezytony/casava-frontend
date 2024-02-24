@@ -126,6 +126,8 @@ const config: Config = {
       '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
       inner: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
       'dialog-menu': '0 2px 8px rgba(0, 0, 0, 0.15)',
+      'active-tab-option': '0px 1px 2px 0px #1018280F, 0px 1px 3px 0px #1018281A',
+      'avatar': '0px 2px 5px 0px #00000012',
       none: 'none',
     },
     boxShadowColor: ({ theme }) => theme('colors'),

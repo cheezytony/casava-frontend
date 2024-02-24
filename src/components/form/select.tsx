@@ -118,7 +118,7 @@ export const FormSelect: React.FC<SelectProps> = ({
         >
           <div
             ref={refs.setFloating}
-            className={`bg-white border-0 border-transparent duration-300 transition rounded-xs py-xs shadow-dialog-menu z-dialog-menu w-full max-w-[350px] ${
+            className={`bg-white border-0 border-transparent duration-300 transition rounded-lg py-xs shadow-dialog-menu z-dialog-menu w-full max-w-[350px] ${
               !isOpen ? 'invisible opacity-0 translate-y-4' : ''
             }`}
             aria-expanded={isOpen}
@@ -136,9 +136,9 @@ export const FormSelect: React.FC<SelectProps> = ({
                     (elementsRef.current[itemIndex] = element)
                   }
                   key={`dropdown-item-${itemIndex}`}
-                  className="appearance-none flex py-xs px-md text-base text-black text-opacity-[0.65] outline-none rounded w-full focus:bg-[#f5f5f5]"
+                  className="appearance-none flex py-xs px-md text-base text-black outline-none rounded w-full first:rounded-t last:rounded-b focus:bg-[#f5f5f5]"
                   role="menuitem"
-                  type='button'
+                  type="button"
                 >
                   {item.title}
                 </button>

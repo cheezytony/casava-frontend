@@ -238,10 +238,10 @@ export class FormValidatorProtoype<
     return this;
   }
 
-  _fileSizeMax(maxSize: number) {
+  _fileSizeMax(maxSize: number, message?: string) {
     const size = formatBytes(Number(maxSize));
     this.rules.fileSizeMax = {
-      message: `The file size should be less than ${size}`,
+      message: message ?? `The file size should be less than ${size}`,
       test: (value) => {
         const file = value as File;
         return file?.constructor === File && file.size < Number(maxSize);

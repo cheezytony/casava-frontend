@@ -2,7 +2,7 @@ import React, { HTMLAttributes, forwardRef } from 'react';
 import { IconName, Icon } from '../icons';
 
 export const InputBaseClassName =
-  'w-full border text-black text-opacity-[0.65] duration-300 transition outline-none focus:text-black focus-within:text-black';
+  'w-full border text-black text-opacity-[0.65] outline-none focus:text-black focus-within:text-black';
 export const InputBackground = {
   base: 'bg-white',
   disabled: 'bg-[#F2F2F7]',
@@ -79,11 +79,11 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
         <input
           {...props}
           ref={ref}
-          className={`border-0 outline-none p-0 w-full ${inputFont} ${InputPlaceholder.base}`}
+          className={`border-0 outline-none p-0 w-full autofill:bg-black ${inputFont} ${InputPlaceholder.base}`}
           placeholder={placeholder}
           onChange={handleChange}
-          // disabled={isDisabled}
-          // readOnly={isReadOnly}
+          {...(isDisabled && { disabled: true })}
+          {...(isReadOnly && { readOnly: true })}
         />
       </FormInputWrapper>
     );

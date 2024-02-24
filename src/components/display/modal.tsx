@@ -173,3 +173,28 @@ export const Confirm: React.FC<ConfirmProps> = ({
     />
   );
 };
+
+export interface AlertModalProps extends ModalProps {
+  type?: 'success' | 'error' | 'warning' | 'info';
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  okText?: React.ReactNode;
+  onOk?: () => void;
+}
+
+// Alert
+
+export const AlertModal: React.FC<AlertModalProps> = ({
+  type = 'info',
+  title,
+  description,
+  okText = 'Ok',
+  onOk,
+  ...props
+}) => {
+  return (
+    <Modal
+      {...props}
+    />
+  );
+}

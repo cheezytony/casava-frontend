@@ -81,3 +81,11 @@ export const objectToQuery = (object: Record<string, any>) => {
     .map((key) => `${key}=${encodeURIComponent(object[key])}`)
     .join('&');
 };
+
+export const nameToInitials = (string: string, max = 2) => {
+  return string
+    .split(' ')
+    .map((word) => word[0])
+    .slice(0, max)
+    .join('');
+}

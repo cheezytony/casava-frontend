@@ -11,7 +11,7 @@ type BaseProductProps = {
   title: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-type ProductProps = React.HTMLAttributes<HTMLDivElement> & {
+export type ProductProps = React.HTMLAttributes<HTMLDivElement> & {
   isSelected?: boolean;
 };
 

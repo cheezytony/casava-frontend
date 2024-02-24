@@ -10,6 +10,7 @@ import {
   FormSelect,
   Heading,
   Paragraph,
+  Width,
 } from '@/components';
 import { Hospital } from './hospital';
 import { useOnboarding } from '@/hooks/onboarding';
@@ -52,8 +53,8 @@ export default function SignupHospitalPage() {
   const [hospitals, setHospitals] = useState([
     'oneness',
     'maranatha',
-    'test',
     'tony',
+    'test',
   ]);
   const selectLga = (lga: { title: string; value: number }) => {
     setLga(lga.value);
@@ -81,8 +82,8 @@ export default function SignupHospitalPage() {
   
   return (
     <CustomMiddleware middleware={middleware} redirectTo={previousPage}>
-      <div>
-        <div className="flex flex-col gap-md items-center text-center mb-lg">
+      <div className="flex flex-col gap-lg">
+        <div className="flex flex-col gap-md items-center text-center">
           <Avatar size="xl" />
           <Heading as="h2" level={2}>
             Choose a primary hospital <br className="hidden md:block" />
@@ -91,33 +92,35 @@ export default function SignupHospitalPage() {
           <Paragraph size="xl">You can change this later on</Paragraph>
         </div>
 
-        <Form className="flex flex-col items-center mb-lg">
-          <div className="mb-xl max-w-full w-[33.25rem]">
-            <FormGroup
-              label="State"
-              input={
-                <FormSelect
-                  leftIcon=""
-                  options={states}
-                  placeholder="Select State"
-                />
-              }
-            />
-          </div>
+        <Width xAuto max={532}>
+          <Form className="flex flex-col items-center">
+            <div className="mb-xl max-w-full w-[33.25rem]">
+              <FormGroup
+                label="State"
+                input={
+                  <FormSelect
+                    leftIcon=""
+                    options={states}
+                    placeholder="Select State"
+                  />
+                }
+              />
+            </div>
 
-          <div className="flex flex-wrap gap-x-md gap-y-lg">
-            {lgas.map((item) => (
-              <Badge
-                colorScheme={item.value === lga ? 'primary' : 'gray'}
-                key={item.value}
-                onClick={() => selectLga(item)}
-                isRounded
-              >
-                {item.title}
-              </Badge>
-            ))}
-          </div>
-        </Form>
+            <div className="flex flex-wrap gap-x-md gap-y-lg">
+              {lgas.map((item) => (
+                <Badge
+                  colorScheme={item.value === lga ? 'primary' : 'gray'}
+                  key={item.value}
+                  onClick={() => selectLga(item)}
+                  isRounded
+                >
+                  {item.title}
+                </Badge>
+              ))}
+            </div>
+          </Form>
+        </Width>
 
         <div
           className={`grid grid-cols-1 ${
@@ -129,8 +132,9 @@ export default function SignupHospitalPage() {
           {hospitals.map((item) => (
             <Hospital
               key={item}
-              isActive={hospital === item}
+              isSelected={hospital === item}
               slug={item}
+              className="cursor-pointer duration-300 active:scale-95 sm:max-w-[372px]"
               onClick={() =>
                 hospital === item ? setHospital(null) : setHospital(item)
               }

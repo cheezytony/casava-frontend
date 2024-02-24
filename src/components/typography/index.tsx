@@ -1,12 +1,14 @@
 import { HTMLAttributes } from 'react';
 
 const HeadingSizes = {
+  lg: 'font-semibold text-[42px] leading-[1.2] md:text-[72px] md:leading-[1.2] tracking-[-0.01rem]',
   1: 'font-semibold text-[36px] leading-[1.2] md:text-[48px] md:leading-[1.2] tracking-[-0.01rem]',
   2: 'font-semibold text-[32px] leading-[1.2] md:text-[40px] md:leading-[1.2] tracking-[-0.01rem]',
   3: 'font-semibold text-[24px] leading-[1.2] md:text-[32px] md:leading-[1.2] tracking-[-0.01rem]',
   4: 'font-semibold text-[20px] leading-[1.2] md:text-[24px] md:leading-[1.2] tracking-[-0.01rem]',
   5: 'font-semibold text-[16px] leading-[1.2] md:text-[20px] md:leading-[1.2] tracking-[-0.01rem]',
   6: 'font-semibold text-[14px] leading-[1.2] md:text-[16px] md:leading-[1.2] tracking-[-0.01rem]',
+  7: 'font-semibold text-[24px] leading-[1.115] md:text-[32px] md:leading-[1.115] tracking-[-0.01rem]',
 };
 
 export const Heading: React.FC<
@@ -31,10 +33,10 @@ export const Heading: React.FC<
 
 const ParagraphSizes = {
   xl: 'text-[20px]',
-  lg: 'text-[18px] leading-[1.4]',
-  md: 'text-[16px] leading-[1.4]',
-  sm: 'text-[14px] leading-[1.4] tracking-[0.01rem]',
-  xs: 'text-[12px] leading-[1.4] tracking-[0.02rem]',
+  lg: 'text-[16px] md:text-[18px] leading-[1.4]',
+  md: 'text-[14px] md:text-[16px] leading-[1.4]',
+  sm: 'text-[12px] md:text-[14px] leading-[1.4] tracking-[0.01rem]',
+  xs: 'text-[10px] md:text-[12px] leading-[1.4] tracking-[0.02rem]',
 };
 
 export const Paragraph: React.FC<

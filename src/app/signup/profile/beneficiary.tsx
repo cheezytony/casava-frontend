@@ -1,6 +1,7 @@
 import {
   Alert,
   Button,
+  Card,
   Form,
   FormGroup,
   FormInput,
@@ -44,40 +45,44 @@ export const BeneficiaryCard: React.FC<BeneficiaryCard> = ({
 
   return (
     <>
-      <div className="bg-white border border-[#EAECF0] rounded-2xl">
-        <div className="p-lg gap-md grid grid-cols-1 md:grid-cols-2">
+      <Card
+        size='lg'
+        footer={
+          <div className="flex justify-between">
+            <div>
+              <Button colorScheme="white" size="sm">
+                {title}
+              </Button>
+            </div>
+            <div className="flex gap-md">
+              <Button
+                colorScheme="gray"
+                isFlush
+                variant="link"
+                leftIcon={<Icon name="IconPencil" size={16} />}
+                onClick={updateModal.open}
+              />
+              <Button
+                isFlush
+                variant="link"
+                leftIcon={<Icon name="IconTrash" size={16} />}
+                onClick={deleteModal.open}
+              />
+            </div>
+          </div>
+        }
+      >
+        <div className="gap-md grid grid-cols-1 md:grid-cols-2">
           {data.map(([key, value]) => (
             <Statistic
               key={key}
               heading={key}
               value={value}
-              className="even:justify-end even:text-right"
+              className="md:even:justify-end md:even:text-right"
             />
           ))}
         </div>
-        <div className="bg-[#F8F9FA] border-t border-[#EAECF0] rounded-b-2xl p-lg flex justify-between">
-          <div>
-            <Button colorScheme="white" size="sm">
-              {title}
-            </Button>
-          </div>
-          <div className="flex gap-md">
-            <Button
-              colorScheme="gray"
-              isFlush
-              variant="link"
-              leftIcon={<Icon name="IconPencil" size={16} />}
-              onClick={updateModal.open}
-            />
-            <Button
-              isFlush
-              variant="link"
-              leftIcon={<Icon name="IconTrash" size={16} />}
-              onClick={deleteModal.open}
-            />
-          </div>
-        </div>
-      </div>
+      </Card>
       <UpdateBeneficiary
         initialValues={{
           firstName,

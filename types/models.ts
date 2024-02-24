@@ -12,3 +12,9 @@ interface Customer {
   phoneNumber: string;
   residentialAddress: string;
 }
+
+interface Plan {
+  id: string;
+  name: string;
+  price: number;
+}

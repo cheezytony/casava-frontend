@@ -43,11 +43,11 @@ export default function SignupProfilePage() {
   const { isOpen, close, open } = useDisclosure();
   const { values, errors, isFormValid, setFieldValue } = useForm({
     initialValues: {
-      firstName: customer?.firstName ?? '',
-      lastName: customer?.lastName ?? '',
-      email: customer?.email ?? '',
-      phoneNumber: customer?.phoneNumber ?? '',
-      residentialAddress: customer?.residentialAddress ?? '',
+      firstName: customer?.firstName ?? 'Antonio',
+      lastName: customer?.lastName ?? 'Okoro',
+      email: customer?.email ?? 'cheezytony1@gmail.com',
+      phoneNumber: customer?.phoneNumber ?? '08105844849',
+      residentialAddress: customer?.residentialAddress ?? '198 Adetola Street',
     },
     validation: {
       firstName: useFormValidator().required(),
@@ -56,7 +56,7 @@ export default function SignupProfilePage() {
       phoneNumber: useFormValidator().required().string.length(11),
       residentialAddress: useFormValidator().required(),
     },
-    validateOnInit: !!customer,
+    validateOnInit: Object.values(customer ?? {}).filter(Boolean).length > 0,
   });
 
   React.useEffect(() => {
@@ -80,8 +80,8 @@ export default function SignupProfilePage() {
 
   return (
     <CustomMiddleware middleware={middleware} redirectTo={previousPage}>
-      <div>
-        <div className="flex flex-col gap-md items-center text-center mb-lg">
+      <div className='flex flex-col gap-lg items-center'>
+        <div className="flex flex-col gap-md items-center text-center">
           <Avatar size="xl" />
           <Heading as="h2" level={2}>
             <span className="text-pink-700">Fantastic!</span> Let&apos;s get to
@@ -90,7 +90,7 @@ export default function SignupProfilePage() {
           </Heading>
         </div>
 
-        <Width max="686px" className="mb-lg mx-auto">
+        <Width max={686} xAuto>
           <Alert
             colorScheme="pink"
             title="Personal Details"
@@ -98,8 +98,8 @@ export default function SignupProfilePage() {
           />
         </Width>
 
-        <Width max="736px" className="flex flex-col gap-lg mb-lg mx-auto">
-          <Card size="lg" className="gap-lg grid grid-cols-1 md:grid-cols-2">
+        <Width max="736px" className="flex flex-col gap-lg">
+          <Card size="lg" bodyClassName="gap-lg grid grid-cols-1 md:grid-cols-2">
             <FormGroup
               label="First name"
               errors={errors.firstName}
@@ -107,6 +107,7 @@ export default function SignupProfilePage() {
                 <FormInput
                   placeholder="Enter first name"
                   value={values.firstName}
+                  name='first_name'
                   onChange={(value) =>
                     setFieldValue(
                       'firstName',
@@ -123,6 +124,7 @@ export default function SignupProfilePage() {
                 <FormInput
                   placeholder="Enter last name"
                   value={values.lastName}
+                  name='last_name'
                   onChange={(value) =>
                     setFieldValue(
                       'lastName',
@@ -139,6 +141,7 @@ export default function SignupProfilePage() {
                 <FormInput
                   placeholder="Enter email address"
                   value={values.email}
+                  name='email'
                   onChange={(value) =>
                     setFieldValue('email', value.toString().replace(/\s/g, ''))
                   }
@@ -152,6 +155,7 @@ export default function SignupProfilePage() {
                 <FormInput
                   placeholder="Enter phone number"
                   value={values.phoneNumber}
+                  name='phone'
                   onChange={(value) =>
                     setFieldValue(
                       'phoneNumber',
@@ -169,6 +173,7 @@ export default function SignupProfilePage() {
                 <FormInput
                   placeholder="Enter residential address"
                   value={values.residentialAddress}
+                  name='address'
                   onChange={(value) =>
                     setFieldValue('residentialAddress', value.toString())
                   }
@@ -177,7 +182,7 @@ export default function SignupProfilePage() {
             />
           </Card>
           {beneficiaries.length > 0 && (
-            <Card className="flex flex-col gap-md">
+            <Card bodyClassName="flex flex-col gap-md">
               {beneficiaries.map((beneficiary, index) => (
                 <BeneficiaryCard
                   key={index}

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import * as Arrows from './arrows';
+import * as Flushed from './flush';
 import * as Math from './math';
 import * as Misc from './misc';
 import * as Objects from './objects';
@@ -7,6 +8,7 @@ import * as Signs from './signs';
 
 const AllIcons = {
   ...Arrows,
+  ...Flushed,
   ...Math,
   ...Misc,
   ...Objects,
@@ -17,7 +19,7 @@ export type IconName = keyof typeof AllIcons;
 
 export interface IconProps {
   className?: string;
-  name: keyof typeof AllIcons;
+  name: IconName;
   size?: number | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
 

@@ -2,22 +2,24 @@ import { HTMLAttributes } from 'react';
 import { Card, FormRadio, Icon, Paragraph } from '@/components';
 
 export interface HospitalProps extends HTMLAttributes<HTMLDivElement> {
-  isActive?: boolean;
+  isSelected?: boolean;
   slug: string;
+  cta?: React.ReactNode;
 }
 
 export const Hospital: React.FC<HospitalProps> = ({
   className = '',
-  isActive,
+  isSelected,
   slug,
+  cta,
   ...props
 }) => {
   return (
     <Card
-      size="none"
-      className={`cursor-pointer duration-300 px-md py-lg active:scale-95 ${
-        isActive ? 'border-pink-700' : ''
-      } hover:border-pink-700 sm:max-w-[372px] ${className}`}
+      size="lg"
+      className={`${
+        isSelected ? 'border-pink-700' : ''
+      } hover:border-pink-700 ${className}`}
       {...props}
     >
       <div className="flex flex-col gap-md">
@@ -52,7 +54,15 @@ export const Hospital: React.FC<HospitalProps> = ({
             </div>
           </div>
           <div className="ml-auto shink-0">
-            <FormRadio isChecked={isActive} className="pointer-events-none" name={slug} />
+            {cta ? (
+              cta
+            ) : (
+              <FormRadio
+                isChecked={isSelected}
+                className="pointer-events-none"
+                name={slug}
+              />
+            )}
           </div>
         </div>
         <hr className="border-[#F2F2F7]" />

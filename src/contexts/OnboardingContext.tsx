@@ -1,5 +1,5 @@
-import React, { PropsWithChildren } from 'react';
-import { InsuranceProduct } from '../../types';
+import React from 'react';
+import { InsuranceProduct, PlanFrequency } from '../../types';
 
 export interface OnboardingContextAttributes {
   canRestart: boolean;
@@ -39,90 +39,15 @@ export interface OnboardingContextAttributes {
   addBeneficiary: (beneficiary: Beneficiary) => void;
   removeBeneficiary: (index: number) => void;
   updateBeneficiary: (index: number, beneficiary: Beneficiary) => void;
+
+  plan: Plan | null;
+  setPlan: React.Dispatch<React.SetStateAction<Plan | null>>;
+
+  planFrequency: PlanFrequency;
+  setPlanFrequency: React.Dispatch<
+    React.SetStateAction<PlanFrequency>
+  >;
 }
 
 export const OnboardingContext =
   React.createContext<OnboardingContextAttributes>({} as OnboardingContextAttributes);
-
-export const OnboardingContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [canRestart, setCanRestart] = React.useState(false);
-  const [canGoForward, setCanGoForward] = React.useState(false);
-  const [progress, setProgress] = React.useState(0);
-  const [previousPage, setPreviousPage] = React.useState<string | null>(null);
-  const [nextPage, setNextPage] = React.useState<string | null>(null);
-
-  const [insuranceProduct, setInsuranceProduct] =
-    React.useState<InsuranceProduct | null>(null);
-  const [state, setState] = React.useState<any>('');
-  const [lga, setLga] = React.useState<any>(null);
-  const [hospital, setHospital] = React.useState<any>(null);
-  const [customer, setCustomer] = React.useState<Customer | null>(null)
-
-  const [beneficiaries, setBeneficiaries] = React.useState<Beneficiary[]>([]);
-
-  const addBeneficiary = (beneficiary: Beneficiary) => {
-    setBeneficiaries((prev) => [...prev, beneficiary]);
-  };
-  const removeBeneficiary = (index: number) => {
-    setBeneficiaries((prev) => prev.filter((_, i) => i !== index));
-  }
-  const updateBeneficiary = (index: number, beneficiary: Beneficiary) => {
-    setBeneficiaries((prev) => prev.map((b, i) => (i === index ? beneficiary : b)));
-  }
-
-  const restart = () => {
-    setCanRestart(false);
-    setProgress(0);
-    setPreviousPage(null);
-    setNextPage(null);
-    setInsuranceProduct(null);
-    setState('');
-    setLga(null);
-    setHospital(null);
-    setBeneficiaries([]);
-  }
-
-  return (
-    <OnboardingContext.Provider
-      value={{
-        canRestart,
-        setCanRestart,
-        restart,
-
-        canGoForward,
-        setCanGoForward,
-
-        progress,
-        setProgress,
-
-        previousPage,
-        setPreviousPage,
-
-        nextPage,
-        setNextPage,
-
-        insuranceProduct,
-        setInsuranceProduct,
-
-        state,
-        setState,
-
-        lga,
-        setLga,
-
-        hospital,
-        setHospital,
-
-        customer,
-        setCustomer,
-        
-        beneficiaries,
-        addBeneficiary,
-        removeBeneficiary,
-        updateBeneficiary,
-      }}
-    >
-      {children}
-    </OnboardingContext.Provider>
-  );
-};

@@ -3,7 +3,6 @@ import { Paragraph } from '..';
 import React from 'react';
 
 export interface StatisticProps {
-  align?: 'left' | 'center' | 'right';
   className?: string;
   orientation?: 'horizontal' | 'vertical';
   heading?: React.ReactNode;

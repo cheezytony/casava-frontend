@@ -26,7 +26,7 @@ export const FormRadio: React.FC<FormRadioProps> = ({
 
   return (
     <button
-      className={`w-lg h-lg rounded-full grid place-items-center border transition-[background-color] ${
+      className={`w-lg h-lg rounded-full grid place-items-center border-[background-color] ${
         isSelected ? 'bg-pink-700 border-pink-700' : 'bg-white border-black'
       } ${className}`}
       type="button"
@@ -34,7 +34,7 @@ export const FormRadio: React.FC<FormRadioProps> = ({
       {...props}
     >
       <div
-        className={`bg-white duration-300 delay-150 h-1/2 w-1/2 rounded-full ${
+        className={`bg-white delay-150 h-1/2 w-1/2 rounded-full ${
           isSelected ? 'scale-100' : 'scale-[0.75]'
         }`}
       />

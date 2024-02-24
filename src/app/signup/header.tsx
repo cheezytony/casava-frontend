@@ -6,7 +6,7 @@ export const SignupHeader: React.FC = () => {
   const { canRestart, previousPage, progress } = useContext(OnboardingContext);
 
   return (
-    <div className="bg-white fixed top-0 left-0 w-full">
+    <div className="bg-white fixed top-0 left-0 w-full z-[100]">
       <div className="flex items-center gap-md h-[65px] px-xl relative">
         {previousPage && (
           <Button

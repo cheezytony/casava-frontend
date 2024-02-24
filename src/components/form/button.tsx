@@ -2,9 +2,14 @@ import { IconName, Icon } from '../icons';
 import React from 'react';
 import Link from 'next/link';
 
-export type ButtonProps = React.AnchorHTMLAttributes<HTMLAnchorElement> &
+export type ButtonProps<
+  TColorScheme extends Exclude<
+    keyof typeof ButtonColorSchemes,
+    'disabled'
+  > = 'primary'
+> = React.AnchorHTMLAttributes<HTMLAnchorElement> &
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    colorScheme?: Exclude<keyof typeof ButtonColors, 'disabled'>;
+    colorScheme?: Exclude<keyof typeof ButtonColorSchemes, 'disabled'>;
     href?: string;
     isDisabled?: boolean;
     isFlush?: boolean;
@@ -13,51 +18,52 @@ export type ButtonProps = React.AnchorHTMLAttributes<HTMLAnchorElement> &
     leftIcon?: IconName | React.ReactNode;
     rightIcon?: IconName | React.ReactNode;
     size?: keyof typeof ButtonSizes;
-    variant?: 'solid' | 'outline' | 'link';
+    variant?: keyof (typeof ButtonColorSchemes)[TColorScheme];
   };
 
 const ButtonBorderRadius = {
   xs: 'rounded',
   sm: 'rounded',
-  md: 'rounded',
+  md: 'rounded-[8px]',
   lg: 'rounded-lg',
   full: 'rounded-full',
 };
-const ButtonColors = {
+const ButtonColorSchemes = {
   primary: {
     solid:
       'bg-pink-700 border-pink-700 text-white hover:bg-pink-800 hover:border-pink-800 focus-visble:bg-pink-800 focus-visble:border-pink-800',
     outline:
       'bg-transparent border-pink-700 text-pink-700 hover:bg-pink-100 focus-visible:bg-pink-100',
-    link: 'border-transparent text-pink-700 hover:underline',
+    link: 'border-transparent text-pink-700 underline',
+    ghost: 'bg-pink-100 border-pink-100 text-pink-700',
   },
   secondary: {
     solid:
       'bg-pink-200 border-pink-200 text-black hover:bg-pink-300 hover:border-pink-300 focus-visble:bg-pink-300 focus-visble:border-pink-300',
     outline:
       'bg-transparent border-pink-200 text-pink-200 hover:bg-pink-100 focus-visible:bg-pink-100',
-    link: 'border-transparent text-pink-200 hover:underline',
+    link: 'border-transparent text-pink-200 underline',
   },
   gray: {
     solid:
       'bg-[#79818C1F] border-[#79818C1F] text-[#191919] hover:bg-[#7a7f851f] hover:border-[#7a7f851f] focus-visble:bg-[#7a7f851f] focus-visble:border-[#7a7f851f]',
     outline:
       'bg-transparent border-gray-700 text-gray-700 hover:bg-gray-100 focus-visible:bg-gray-100',
-    link: 'border-transparent text-[#98A2B3] hover:underline',
+    link: 'border-transparent text-[#98A2B3] underline',
   },
   black: {
     solid:
       'bg-black border-black text-white hover:bg-gray-700 hover:border-gray-700 focus-visble:bg-gray-700 focus-visble:border-gray-700',
     outline:
       'bg-transparent border-black text-black hover:bg-gray-100 focus-visible:bg-gray-100',
-    link: 'border-transparent text-black hover:underline',
+    link: 'border-transparent text-[#344054] underline',
   },
   white: {
     solid:
-      'bg-white border-white text-black hover:bg-gray-100 hover:border-gray-100 focus-visble:bg-gray-100 focus-visble:border-gray-100',
+      'bg-white border-white text-[#808080] hover:bg-gray-100 hover:border-gray-100 focus-visble:bg-gray-100 focus-visble:border-gray-100',
     outline:
       'bg-transparent border-white text-white hover:bg-gray-100 focus-visible:bg-gray-100',
-    link: 'border-transparent text-white hover:underline',
+    link: 'border-transparent text-white underline',
   },
   disabled: 'bg-[#f5f5f5] border-[#f5f5f5] opacity-50 text-black',
 };
@@ -66,15 +72,15 @@ const ButtonCursors = {
   disabled: 'cursor-not-allowed',
 };
 const ButtonPaddings = {
-  xs: 'px-8 py-[0.375rem]',
-  sm: 'px-8 py-[8px]',
-  md: 'px-8 py-[10px]',
-  lg: 'px-8 py-[14px]',
+  xs: 'px-[4px] py-[6px]',
+  sm: 'px-[8px] py-[8px]',
+  md: 'px-[16px] py-[10px]',
+  lg: 'px-[32px] py-[14px]',
 };
 const ButtonSizes = {
   xs: 'gap-xs text-xs leading-normal',
   sm: 'gap-xs text-sm leading-normal',
-  md: 'gap-xs text-base leading-normal',
+  md: 'gap-xs text-sm leading-normal',
   lg: 'gap-xs text-lg leading-normal',
 };
 
@@ -102,7 +108,7 @@ export const Button = React.forwardRef<
   ) => {
     const isButtonDisabled = isDisabled || disabled;
     const baseClassName =
-      'border font-semibold duration-300 inline-flex items-center justify-center transition';
+      'border font-semibold font-sans inline-flex items-center justify-center';
     const borderRadius = isRounded
       ? ButtonBorderRadius.full
       : ButtonBorderRadius[size];
@@ -113,8 +119,9 @@ export const Button = React.forwardRef<
         : ButtonCursors.base;
     const buttonPadding = isFlush ? '' : ButtonPaddings[size];
     const buttonColor = !isButtonDisabled
-      ? ButtonColors[colorScheme][variant]
-      : ButtonColors.disabled;
+      // @ts-ignore
+      ? ButtonColorSchemes[colorScheme][variant]
+      : ButtonColorSchemes.disabled;
 
     return (
       <ButtonOrLink
@@ -150,7 +157,6 @@ export const Button = React.forwardRef<
 );
 Button.displayName = 'Button';
 
-
 type AnchorElement = React.AnchorHTMLAttributes<HTMLAnchorElement>;
 type ButtonElement = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -167,6 +173,7 @@ export const ButtonOrLink = React.forwardRef<
     return (
       <Link
         href={href}
+        target={target}
         ref={ref as React.ForwardedRef<HTMLAnchorElement>}
         {...(props as AnchorElement)}
       >
