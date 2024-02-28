@@ -19,9 +19,8 @@ export default function SignupPage() {
   const router = useRouter();
   const {
     insuranceProduct,
-    setCanGoForward,
     setInsuranceProduct,
-    setNextPage,
+    setNextAction,
     setPreviousPage,
     setProgress,
   } = useOnboarding();
@@ -33,13 +32,16 @@ export default function SignupPage() {
   useEffect(() => {
     setPreviousPage(null);
     setProgress(0);
-    setNextPage('/signup/hospital');
-  }, [setNextPage, setPreviousPage, setProgress]);
+  }, [setPreviousPage, setProgress]);
 
   React.useEffect(() => {
-    setCanGoForward(!!insuranceProduct);
-  }, [insuranceProduct, setCanGoForward]);
-  
+    setNextAction({
+      href: '/signup/hospital',
+      canNavigate: !!insuranceProduct,
+    });
+    return () => setNextAction(null);
+  }, [insuranceProduct]);
+
   const products: Array<{
     slug: InsuranceProduct;
     component: React.FC<ProductProps>;

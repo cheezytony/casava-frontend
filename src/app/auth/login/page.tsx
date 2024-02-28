@@ -7,13 +7,17 @@ export default function LoginPage(): JSX.Element {
   const { values, errors, setFieldValue } = useForm({
     initialValues: { firstName: 'Antonio', lastName: 'Okoro', email: '', age: 25 },
     validation: {
-      firstName: useFormValidator().required().alphabets.only(),
+      firstName: useFormValidator().required()._alphabets.only(),
       lastName: useFormValidator().required(),
-      email: useFormValidator().required().string.email(),
-      age: useFormValidator().required().number.min(18).number.max(25),
+      email: useFormValidator().required()._string.email(),
+      age: useFormValidator().required()._number.min(18)._number.max(25),
     },
   });
 
+  const largeList = Array.from({ length: 100 }, (_, i) => ({
+    label: `Item ${i + 1}`,
+  }));
+  
   return (
     <div className="p-10">
       <h1>Login Page</h1>
@@ -171,62 +175,7 @@ export default function LoginPage(): JSX.Element {
             Disabled
           </Button>
         </ButtonGroup> */}
-        <Dropdown
-          items={[
-            [
-              {
-                label: (
-                  <a className="flex items-start text-left">
-                    <div className="flex flex-col gap-[2px]">
-                      <div className="text-[20px] leading-[28px]">
-                        Income Protection
-                      </div>
-                      <div className="text-[16px]">
-                        Two lines description here and there
-                      </div>
-                    </div>
-                  </a>
-                ),
-              },
-            ],
-            [
-              {
-                label: (
-                  <a className="flex items-start text-left">
-                    <div className="flex flex-col gap-[2px]">
-                      <div className="text-[20px] leading-[28px]">
-                        Income Protection
-                      </div>
-                      <div className="text-[16px]">
-                        Two lines description here and there
-                      </div>
-                    </div>
-                  </a>
-                ),
-              },
-            ],
-            // [
-            //   {
-            //     heading: 'Health Insurance',
-            //     title: 'Two lines description here and there',
-            //   },
-            // ],
-            // [
-            //   {
-            //     heading: 'Health Cash',
-            //     title: 'Two lines description here and there',
-            //   },
-            // ],
-            // [
-            //   {
-            //     heading: 'Credit Life',
-            //     title: 'Two lines description here and there',
-            //   },
-            // ],
-          ]}
-        >
-          {<Button>Dropdown</Button>}
-        </Dropdown>
+        <Dropdown label={<Button>Dropdown</Button>} items={[largeList]} selectedIndex={20} />
       </div>
     </div>
   );

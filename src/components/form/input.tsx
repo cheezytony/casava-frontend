@@ -1,8 +1,10 @@
 import React, { HTMLAttributes, forwardRef } from 'react';
 import { IconName, Icon } from '../icons';
+import { Button } from '.';
+import { useMergeRefs } from '@floating-ui/react';
 
 export const InputBaseClassName =
-  'w-full border text-black text-opacity-[0.65] outline-none focus:text-black focus-within:text-black';
+  'w-full border text-black text-opacity-[0.65] outline-none *:placeholder:text-[#bfbfbf] focus:text-black focus-within:text-black';
 export const InputBackground = {
   base: 'bg-white',
   disabled: 'bg-[#F2F2F7]',
@@ -20,10 +22,6 @@ export const InputFonts = {
 };
 export const InputPaddings = {
   md: 'p-md',
-};
-export const InputPlaceholder = {
-  custom: 'text-[#bfbfbf]',
-  base: 'placeholder:text-[#bfbfbf]',
 };
 
 export interface FormInputProps {
@@ -43,6 +41,14 @@ export interface FormInputProps {
   onChange?: (value: string | number) => void;
 }
 
+export const FormInputPlaceholder = ({ text }: { text: string }) => {
+  return (
+    <div className="whitespace-nowrap overflow-hidden text-[#bfbfbf]">
+      {text}
+    </div>
+  );
+};
+
 export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
   (
     {
@@ -51,7 +57,6 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
       isReadOnly,
       isRounded,
       leftIcon,
-      placeholder,
       rightIcon,
       size = 'md',
       onChange,
@@ -60,10 +65,6 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
     ref
   ) => {
     const inputFont = InputFonts[size];
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      onChange?.(event.target.value);
-    };
 
     return (
       <FormInputWrapper
@@ -79,9 +80,8 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
         <input
           {...props}
           ref={ref}
-          className={`border-0 outline-none p-0 w-full autofill:bg-black ${inputFont} ${InputPlaceholder.base}`}
-          placeholder={placeholder}
-          onChange={handleChange}
+          className={`border-0 outline-none p-0 w-full autofill:bg-black ${inputFont}`}
+          onChange={(e) => onChange?.(e.target.value)}
           {...(isDisabled && { disabled: true })}
           {...(isReadOnly && { readOnly: true })}
         />
@@ -91,14 +91,72 @@ export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
 );
 FormInput.displayName = 'FormInput';
 
+export const FormPassword = forwardRef<
+  HTMLInputElement,
+  Omit<FormInputProps, 'rightIcon'>
+>(
+  (
+    {
+      className = '',
+      isDisabled,
+      isReadOnly,
+      isRounded,
+      leftIcon,
+      size = 'md',
+      onChange,
+      ...props
+    },
+    ref
+  ) => {
+    const inputRef = React.useRef<HTMLInputElement>(null);
+    const [showPassword, setShowPassword] = React.useState(false);
+    const toggleShowPassword = () => {
+      setShowPassword(!showPassword);
+      inputRef.current?.focus();
+    }
+    
+    return (
+      <FormInputWrapper
+        {...{
+          isDisabled,
+          isRounded,
+          leftIcon,
+          size,
+          className: `cursor-text relative ${className}`,
+        }}
+      >
+        <input
+          {...props}
+          ref={useMergeRefs([ref, inputRef])}
+          type={showPassword ? 'text' : 'password'}
+          className="border-0 outline-none p-0 w-full autofill:bg-black"
+          onChange={(e) => onChange?.(e.target.value)}
+          {...(isDisabled && { disabled: true })}
+          {...(isReadOnly && { readOnly: true })}
+        />
+        <Button
+          colorScheme={showPassword ? 'primary' : 'black'}
+          leftIcon="IconEye"
+          variant="link"
+          size="xs"
+          className="absolute right-0 top-1/2 -translate-y-1/2 m-auto mr-md"
+          tabIndex={-1}
+          onClick={toggleShowPassword}
+        />
+      </FormInputWrapper>
+    );
+  }
+);
+FormPassword.displayName = 'FormPassword';
+
 export interface FormInputWrapperProps extends HTMLAttributes<HTMLElement> {
   as?: React.ElementType;
   className?: string;
   isDisabled?: boolean;
   isFlush?: boolean;
   isRounded?: boolean;
-  leftIcon?: IconName | React.ReactNode;
-  rightIcon?: IconName | React.ReactNode;
+  leftIcon?: IconName | React.JSX.Element;
+  rightIcon?: IconName | React.JSX.Element;
   size?: 'md';
 }
 
@@ -147,13 +205,16 @@ export const FormInputWrapper = React.forwardRef<
           ) : (
             leftIcon
           ))}
-        <div className="w-full">{children}</div>
-        {rightIcon &&
-          (typeof rightIcon === 'string' ? (
-            <Icon name={rightIcon as IconName} size={size} />
-          ) : (
-            rightIcon
-          ))}
+        {children}
+        {rightIcon && (
+          <span className="ml-auto">
+            {typeof rightIcon === 'string' ? (
+              <Icon name={rightIcon as IconName} size={size} />
+            ) : (
+              rightIcon
+            )}
+          </span>
+        )}
       </Element>
     );
   }

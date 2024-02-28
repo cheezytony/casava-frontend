@@ -35,7 +35,7 @@ const ParagraphSizes = {
   xl: 'text-[20px]',
   lg: 'text-[16px] md:text-[18px] leading-[1.4]',
   md: 'text-[14px] md:text-[16px] leading-[1.4]',
-  sm: 'text-[12px] md:text-[14px] leading-[1.4] tracking-[0.01rem]',
+  sm: 'text-[12px] md:text-[14px] leading-[1.4] tracking-[0.001rem]',
   xs: 'text-[10px] md:text-[12px] leading-[1.4] tracking-[0.02rem]',
 };
 

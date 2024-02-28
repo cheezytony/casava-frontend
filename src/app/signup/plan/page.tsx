@@ -1,7 +1,13 @@
 'use client';
 
-import { Avatar, CustomMiddleware, Heading, Tabs, Width } from '@/components';
-import { Tag } from '@/components/display/tag';
+import {
+  Avatar,
+  CustomMiddleware,
+  Heading,
+  Tabs,
+  Tag,
+  Width,
+} from '@/components';
 import { useOnboarding } from '@/hooks';
 import React from 'react';
 import { Plan, PlanCoverage } from './plan';

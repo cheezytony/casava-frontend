@@ -1,5 +1,5 @@
-import React, { useLayoutEffect } from 'react';
-import { Button, Heading, Icon, Paragraph, Text } from '..';
+import React from 'react';
+import { Button, Heading, Icon, IconName, Paragraph } from '..';
 import { FloatingPortal } from '@floating-ui/react';
 
 export interface ModalProps {
@@ -49,7 +49,7 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   const dialog = React.useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
+  React.useEffect(() => {
     if (isOpen && dialog.current) dialog.current.focus();
   }, [isOpen]);
 
@@ -57,7 +57,7 @@ export const Modal: React.FC<ModalProps> = ({
     <FloatingPortal>
       <div
         ref={dialog}
-        className={`fixed inset-0 grid place-items-center isolate overflow-y-auto  ${
+        className={`fixed inset-0 grid place-items-center isolate overflow-y-auto z-overlay  ${
           isOpen ? 'dialog-open' : 'invisible pointer-events-none'
         }`}
         role="dialog"
@@ -97,74 +97,110 @@ export const Modal: React.FC<ModalProps> = ({
   );
 };
 
-export interface ConfirmProps
-  extends Pick<
-    ModalProps,
-    | 'closeOnEscape'
-    | 'closeOnOutsideClick'
-    | 'closeOnSubmit'
-    | 'isOpen'
-    | 'onClose'
-  > {
+export interface AlertModalProps extends ModalProps {
+  uuid?: string;
+  type?: keyof typeof AlertModalIconColorSchemes;
   title?: React.ReactNode;
   description?: React.ReactNode;
-  cancelText?: React.ReactNode;
+  duration?: number;
   okText?: React.ReactNode;
+  cancelText?: React.ReactNode;
+  showCancelButton?: boolean;
+  onOk?: () => void | Promise<void> | (() => Promise<void>);
   onCancel?: () => void;
-  onConfirm?: () => void | Promise<void> | (() => Promise<void>);
 }
 
-export const Confirm: React.FC<ConfirmProps> = ({
+const AlertModalIcons: Record<
+  keyof typeof AlertModalIconColorSchemes,
+  IconName
+> = {
+  success: 'IconCheckmark',
+  error: 'IconClose',
+  warning: 'IconAlertCircle',
+  info: 'IconBox',
+};
+
+const AlertModalIconColorSchemes = {
+  success: 'bg-lightGreen-300 text-lightGreen-800',
+  error: 'bg-pink-300 text-pink-800',
+  warning: 'bg-pink-100 text-pink-700',
+  info: 'bg-blue-100 text-blue-600',
+};
+
+export const AlertModal: React.FC<AlertModalProps> = ({
+  type = 'info',
   title,
   description,
+  okText = 'Okay',
   cancelText = 'Cancel',
-  okText = 'Ok',
+  duration,
+  showCancelButton,
+  onOk,
+  onClose,
   onCancel,
-  onConfirm,
   ...props
 }) => {
+  const alertIcon = AlertModalIcons[type];
+  const alertColorScheme = AlertModalIconColorSchemes[type];
   const [isLoading, setIsLoading] = React.useState(false);
   const handleOnConfirm = async () => {
     if (
-      onConfirm instanceof (async () => {}).constructor ||
-      onConfirm instanceof Promise
+      onOk instanceof (async () => {}).constructor ||
+      onOk instanceof Promise
     ) {
       setIsLoading(true);
-      await onConfirm();
+      await onOk();
       return setIsLoading(false);
     }
-    onConfirm?.();
+    onOk?.();
   };
+
+  const handleOnClose = () => onClose?.();
+
+  React.useEffect(() => {
+    let timeout = duration ? setTimeout(handleOnClose, duration) : undefined;
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <Modal
       {...props}
-      size="md"
+      onClose={handleOnClose}
       body={
-        <div className="flex flex-col gap-lg">
-          <div className="flex gap-md">
-            <div className="bg-[#F5F5F5] h-[44px] w-[44px] rounded-full grid place-items-center shrink-0">
-              <Icon name="IconAlertCircle" size={24} />
-            </div>
-            <div>
-              <Paragraph size="lg" className="font-bold mb-xs">
-                {title}
-              </Paragraph>
-              <Text as="p" size="sm" className="text-[#333333]">
-                {description}
-              </Text>
-            </div>
+        <div className="flex flex-col gap-md items-center text-center">
+          <div
+            className={`h-[64px] w-[64px] grid place-items-center rounded-full ${alertColorScheme}`}
+          >
+            <Icon name={alertIcon} size={32} />
           </div>
-          <div className="grid md:grid-cols-2 gap-md">
+          {title && (
+            <Heading as="h3" level={3}>
+              {title}
+            </Heading>
+          )}
+          {description && (
+            <Paragraph className="mb-md text-[#6B7280]">
+              {description}
+            </Paragraph>
+          )}
+          <div className="flex flex-col items-center gap-md md:flex-row w-full">
+            {showCancelButton && (
+              <Button
+                className="w-full"
+                isDisabled={isLoading}
+                colorScheme="gray"
+                size="lg"
+                onClick={onCancel}
+              >
+                {cancelText}
+              </Button>
+            )}
             <Button
-              isDisabled={isLoading}
-              colorScheme="gray"
+              className="w-full"
+              isLoading={isLoading}
               size="lg"
-              onClick={onCancel}
+              onClick={handleOnConfirm}
             >
-              {cancelText}
-            </Button>
-            <Button isLoading={isLoading} size="lg" onClick={handleOnConfirm}>
               {okText}
             </Button>
           </div>
@@ -173,28 +209,3 @@ export const Confirm: React.FC<ConfirmProps> = ({
     />
   );
 };
-
-export interface AlertModalProps extends ModalProps {
-  type?: 'success' | 'error' | 'warning' | 'info';
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-  okText?: React.ReactNode;
-  onOk?: () => void;
-}
-
-// Alert
-
-export const AlertModal: React.FC<AlertModalProps> = ({
-  type = 'info',
-  title,
-  description,
-  okText = 'Ok',
-  onOk,
-  ...props
-}) => {
-  return (
-    <Modal
-      {...props}
-    />
-  );
-}

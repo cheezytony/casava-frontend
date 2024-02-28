@@ -38,3 +38,9 @@ export const SmallLoader: React.FC = () => {
     </div>
   );
 };
+
+export const Spinner: React.FC = () => {
+  return (
+    <div className="animate-spin rounded-full h-6 w-6 border-2 border-t-transparent border-r-transparent border-current" />
+  );
+};

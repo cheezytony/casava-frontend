@@ -34,6 +34,9 @@ export const formatData = (value: string | number | Date, type: DataFormat) => {
         : value;
 
     default:
-      return value;
+      if (value?.constructor === Date) {
+        return dateTimeFormat(value, 'date');
+      }
+      return value as string | number | null;
   }
 };

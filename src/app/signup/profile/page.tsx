@@ -33,15 +33,14 @@ export default function SignupProfilePage() {
     removeBeneficiary,
     updateBeneficiary,
 
-    setNextPage,
+    setNextAction,
     setPreviousPage,
     setProgress,
-    setCanGoForward,
   } = useOnboarding();
   const middleware = () => !!hospital;
 
-  const { isOpen, close, open } = useDisclosure();
-  const { values, errors, isFormValid, setFieldValue } = useForm({
+  const modal = useDisclosure();
+  const { values, errors, isAllValid, setFieldValue } = useForm({
     initialValues: {
       firstName: customer?.firstName ?? 'Antonio',
       lastName: customer?.lastName ?? 'Okoro',
@@ -52,27 +51,30 @@ export default function SignupProfilePage() {
     validation: {
       firstName: useFormValidator().required(),
       lastName: useFormValidator().required(),
-      email: useFormValidator().required().string.email(),
-      phoneNumber: useFormValidator().required().string.length(11),
+      email: useFormValidator().required().email(),
+      phoneNumber: useFormValidator().required()._string.length(11),
       residentialAddress: useFormValidator().required(),
     },
-    validateOnInit: Object.values(customer ?? {}).filter(Boolean).length > 0,
+    // validateOnInit: Object.values(customer ?? {}).filter(Boolean).length > 0,
+    validateOnInit: true,
   });
 
   React.useEffect(() => {
     setPreviousPage(previousPage);
     setProgress(20);
-    setNextPage('/signup/plan');
     return () => {
       setPreviousPage(null);
       setProgress(0);
-      setNextPage(null);
     };
-  }, [setPreviousPage, setProgress, setNextPage]);
+  }, [setPreviousPage, setProgress]);
 
   React.useEffect(() => {
-    setCanGoForward(isFormValid);
-  }, [isFormValid, setCanGoForward]);
+    setNextAction({
+      href: '/signup/plan',
+      canNavigate: !!isAllValid,
+    });
+    return () => setNextAction(null);
+  }, [isAllValid]);
 
   React.useEffect(() => {
     setCustomer((customer) => ({ ...customer, ...values }));
@@ -197,15 +199,14 @@ export default function SignupProfilePage() {
             </Card>
           )}
           <div className="div">
-            <Button isFlush leftIcon="IconPlus" variant="link" onClick={open}>
+            <Button isFlush leftIcon="IconPlus" variant="link" onClick={modal.onOpen}>
               Add beneficiary
             </Button>
           </div>
         </Width>
       </div>
       <CreateBeneficiary
-        isOpen={isOpen}
-        onClose={close}
+        {...modal}
         onSubmit={addBeneficiary}
       />
     </CustomMiddleware>

@@ -14,7 +14,7 @@ import {
 } from '@/components';
 import { Hospital } from './hospital';
 import { useOnboarding } from '@/hooks/onboarding';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 export default function SignupHospitalPage() {
   const previousPage = '/signup';
@@ -30,18 +30,18 @@ export default function SignupHospitalPage() {
     hospital,
     setHospital,
 
-    setCanGoForward,
-    setNextPage,
+    setNextAction,
+
     setPreviousPage,
     setProgress,
   } = useOnboarding();
   const middleware = () => !!insuranceProduct;
-  const [states, setStates] = useState<Array<{ title: string; value: number }>>(
+  const [states, setStates] = useState<Array<{ label: string; value: number }>>(
     [
-      { title: 'Lagos', value: 1 },
-      { title: 'Abuja', value: 2 },
-      { title: 'Kano', value: 3 },
-      { title: 'Oyo', value: 4 },
+      { label: 'Lagos', value: 1 },
+      { label: 'Abuja', value: 2 },
+      { label: 'Kano', value: 3 },
+      { label: 'Oyo', value: 4 },
     ]
   );
   const [lgas, setLgas] = useState<Array<{ title: string; value: number }>>([
@@ -64,22 +64,19 @@ export default function SignupHospitalPage() {
     [state, states]
   );
 
+  React.useEffect(() => {
+    setNextAction({ href: '/signup/profile', canNavigate: !!hospital });
+    return () => setNextAction(null);
+  }, [hospital]);
   useEffect(() => {
     setPreviousPage(previousPage);
     setProgress(10);
-    setNextPage('/signup/profile');
     return () => {
       setPreviousPage(null);
-      setNextPage(null);
       setProgress(0);
     };
-  }, [setNextPage, setPreviousPage, setProgress]);
+  }, [setPreviousPage, setProgress]);
 
-  useEffect(() => {
-    setCanGoForward(!!hospital);
-    return () => setCanGoForward(false);
-  }, [hospital, setCanGoForward]);
-  
   return (
     <CustomMiddleware middleware={middleware} redirectTo={previousPage}>
       <div className="flex flex-col gap-lg">
@@ -99,7 +96,6 @@ export default function SignupHospitalPage() {
                 label="State"
                 input={
                   <FormSelect
-                    leftIcon=""
                     options={states}
                     placeholder="Select State"
                   />

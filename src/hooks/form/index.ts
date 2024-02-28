@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState, useCallback } from 'react';
 import { FormValidationRule, FormValidatorProtoype } from './rules';
 
 // Define the type for form input values.
-export type FormInputValue = string | number | boolean | File | undefined;
+export type FormInputValue = string | number | boolean | File | Date | null | undefined;
 
 // Configuration interface for the useForm hook.
 export interface UseFormConfig<TKeys extends Record<string, FormInputValue>> {
@@ -10,6 +10,7 @@ export interface UseFormConfig<TKeys extends Record<string, FormInputValue>> {
   validation?: Partial<Record<keyof TKeys, FormValidatorProtoype<TKeys>>>; // Validation rules for each field.
   validateOnSubmit?: boolean; // Whether to validate all fields on form submission.
   validateOnInit?: boolean; // Whether to validate all fields on form initialization.
+  validateAllRulesAtOnce?: boolean;
   onSubmit?: (
     values: Record<keyof TKeys, FormInputValue>,
     isAllValid: boolean
@@ -19,10 +20,14 @@ export interface UseFormConfig<TKeys extends Record<string, FormInputValue>> {
 // Utility function to transform keys of an object into a specified value.
 const transformKeys = <TKeys extends Record<string, FormInputValue>, TValue>(
   keys: TKeys,
-  value: TValue
+  value: TValue | ((name: keyof TKeys) => TValue)
 ) =>
   Object.keys(keys).reduce((acc, key) => {
-    acc[key as keyof TKeys] = value;
+    const computedValue =
+      typeof value === 'function'
+        ? (value as (name: keyof TKeys) => TValue)(key)
+        : value;
+    acc[key as keyof TKeys] = computedValue;
     return acc;
   }, {} as Record<keyof TKeys, TValue>);
 
@@ -31,17 +36,24 @@ export const useForm = <TKeys extends Record<string, FormInputValue>>({
   initialValues,
   validation,
   validateOnInit = false,
-  validateOnSubmit = false,
+  validateOnSubmit = true,
+  validateAllRulesAtOnce = false,
   onSubmit,
 }: UseFormConfig<TKeys>) => {
   const initial = useRef(initialValues);
   const [values, setValues] = useState(initialValues);
   const [touched, setTouched] = useState(transformKeys(initialValues, false));
-  const [valid, setValid] = useState(transformKeys(initialValues, false));
+  const [valid, setValid] = useState(
+    transformKeys(initialValues, (name) => {
+      const validator = validation?.[name];
+      if (validator?.rules.nullable) return true;
+      return false;
+    })
+  );
   const [errors, setErrors] = useState<
     Record<keyof TKeys, Record<FormValidationRule, string> | null>
   >(transformKeys(initialValues, null));
-  
+
   const lastUpdatedFields = useRef<Array<keyof TKeys>>(
     validateOnInit && initialValues && Object.keys(initialValues).length > 0
       ? Object.keys(initialValues)
@@ -49,7 +61,7 @@ export const useForm = <TKeys extends Record<string, FormInputValue>>({
   );
 
   // Determines if the form is valid based on the 'valid' state.
-  const isFormValid = useMemo(
+  const isAllValid = useMemo(
     () => Object.values(valid).every(Boolean),
     [valid]
   );
@@ -109,8 +121,14 @@ export const useForm = <TKeys extends Record<string, FormInputValue>>({
     setValues(initial.current);
     setErrors(transformKeys(initialValues, null));
     setTouched(transformKeys(initialValues, false));
-    setValid(transformKeys(initialValues, false));
-  }, [initialValues]);
+    setValid(
+      transformKeys(initialValues, (name) => {
+        const validator = validation?.[name];
+        if (validator?.rules.nullable) return true;
+        return false;
+      })
+    );
+  }, [initialValues, validation]);
 
   // Validates a single field against its validation rules.
   const validateField = useCallback(
@@ -123,10 +141,10 @@ export const useForm = <TKeys extends Record<string, FormInputValue>>({
 
       for (const ruleName in validator.rules) {
         const { message, test } = validator.rules[ruleName];
-        isValid = test(values[key], values);
-        if (!isValid) {
+        if (!test(values[key], values)) {
+          isValid = false;
           fieldErrors[ruleName as FormValidationRule] = message;
-          break;
+          if (!validateAllRulesAtOnce) break;
         }
       }
 
@@ -154,9 +172,8 @@ export const useForm = <TKeys extends Record<string, FormInputValue>>({
 
   // Handles form submission.
   const handleSubmit = useCallback(() => {
-    const isAllValid = validateOnSubmit ? validateForm() : isFormValid;
-    onSubmit?.(values, isAllValid);
-  }, [validateForm, validateOnSubmit, values, isFormValid, onSubmit]);
+    onSubmit?.(values, validateOnSubmit ? validateForm() : isAllValid);
+  }, [validateOnSubmit, values, isAllValid, onSubmit, validateForm]);
 
   // Effect to validate fields marked for validation.
   React.useEffect(() => {
@@ -167,7 +184,7 @@ export const useForm = <TKeys extends Record<string, FormInputValue>>({
   return {
     errors,
     touched,
-    isFormValid,
+    isAllValid,
     valid,
     values,
     handleSubmit,

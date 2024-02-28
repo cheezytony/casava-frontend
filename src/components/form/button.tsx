@@ -1,26 +1,26 @@
 import { IconName, Icon } from '../icons';
 import React from 'react';
 import Link from 'next/link';
+import { Spinner } from '..';
 
 export type ButtonProps<
-  TColorScheme extends Exclude<
-    keyof typeof ButtonColorSchemes,
-    'disabled'
-  > = 'primary'
+  TColorScheme extends ButtonColorScheme = 'primary'
 > = React.AnchorHTMLAttributes<HTMLAnchorElement> &
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    colorScheme?: Exclude<keyof typeof ButtonColorSchemes, 'disabled'>;
+    colorScheme?: TColorScheme;
     href?: string;
     isDisabled?: boolean;
     isFlush?: boolean;
     isLoading?: boolean;
     isRounded?: boolean;
-    leftIcon?: IconName | React.ReactNode;
-    rightIcon?: IconName | React.ReactNode;
+    leftIcon?: IconName | React.JSX.Element;
+    rightIcon?: IconName | React.JSX.Element;
     size?: keyof typeof ButtonSizes;
     variant?: keyof (typeof ButtonColorSchemes)[TColorScheme];
   };
 
+export type ButtonColorScheme = Exclude<keyof typeof ButtonColorSchemes, 'disabled'>;
+  
 const ButtonBorderRadius = {
   xs: 'rounded',
   sm: 'rounded',
@@ -50,6 +50,7 @@ const ButtonColorSchemes = {
     outline:
       'bg-transparent border-gray-700 text-gray-700 hover:bg-gray-100 focus-visible:bg-gray-100',
     link: 'border-transparent text-[#98A2B3] underline',
+    ghost: 'bg-gray-100 border-gray-100 text-gray-700',
   },
   black: {
     solid:
@@ -57,6 +58,7 @@ const ButtonColorSchemes = {
     outline:
       'bg-transparent border-black text-black hover:bg-gray-100 focus-visible:bg-gray-100',
     link: 'border-transparent text-[#344054] underline',
+    ghost: 'bg-gray-100 border-gray-100 text-black',
   },
   white: {
     solid:
@@ -84,85 +86,87 @@ const ButtonSizes = {
   lg: 'gap-xs text-lg leading-normal',
 };
 
-export const Button = React.forwardRef<
-  HTMLAnchorElement | HTMLButtonElement,
-  React.PropsWithChildren<ButtonProps>
+const ButtonComponent = (
+  {
+    children,
+    className = '',
+    colorScheme = 'primary',
+    disabled,
+    isDisabled,
+    isFlush,
+    isLoading,
+    isRounded,
+    leftIcon,
+    rightIcon,
+    size = 'md',
+    variant = 'solid',
+    ...props
+  }: React.PropsWithChildren<ButtonProps>,
+  ref: React.Ref<HTMLButtonElement | HTMLAnchorElement>
+) => {
+  const isButtonDisabled = isDisabled || disabled;
+  const baseClassName =
+    'border font-semibold font-sans inline-flex items-center justify-center';
+  const borderRadius = isRounded
+    ? ButtonBorderRadius.full
+    : ButtonBorderRadius[size];
+  const buttonSize = ButtonSizes[size];
+  const cursor =
+    isButtonDisabled || isLoading ? ButtonCursors.disabled : ButtonCursors.base;
+  const buttonPadding = isFlush ? '' : ButtonPaddings[size];
+  const buttonColor = !isButtonDisabled
+    ? // @ts-ignore
+      ButtonColorSchemes[colorScheme][variant]
+    : ButtonColorSchemes.disabled;
+
+  return (
+    <ButtonOrLink
+      {...props}
+      ref={ref}
+      disabled={isButtonDisabled || isLoading}
+      className={[
+        baseClassName,
+        borderRadius,
+        buttonSize,
+        cursor,
+        buttonColor,
+        buttonPadding,
+        className,
+      ].join(' ')}
+    >
+      {leftIcon &&
+        (typeof leftIcon === 'string' ? (
+          <Icon name={leftIcon as IconName} />
+        ) : (
+          leftIcon
+        ))}
+      {children && <span>{children}</span>}
+      {(rightIcon || isLoading) &&
+        (isLoading ? (
+          <Spinner />
+        ) : typeof rightIcon === 'string' ? (
+          <Icon name={rightIcon as IconName} />
+        ) : (
+          rightIcon
+        ))}
+    </ButtonOrLink>
+  );
+};
+
+export const Button = React.forwardRef(ButtonComponent) as <
+  TColorScheme extends ButtonColorScheme = 'primary'
 >(
-  (
-    {
-      children,
-      className = '',
-      colorScheme = 'primary',
-      disabled,
-      isDisabled,
-      isFlush,
-      isLoading,
-      isRounded,
-      leftIcon,
-      rightIcon,
-      size = 'md',
-      variant = 'solid',
-      ...props
-    },
-    ref
-  ) => {
-    const isButtonDisabled = isDisabled || disabled;
-    const baseClassName =
-      'border font-semibold font-sans inline-flex items-center justify-center';
-    const borderRadius = isRounded
-      ? ButtonBorderRadius.full
-      : ButtonBorderRadius[size];
-    const buttonSize = ButtonSizes[size];
-    const cursor =
-      isButtonDisabled || isLoading
-        ? ButtonCursors.disabled
-        : ButtonCursors.base;
-    const buttonPadding = isFlush ? '' : ButtonPaddings[size];
-    const buttonColor = !isButtonDisabled
-      // @ts-ignore
-      ? ButtonColorSchemes[colorScheme][variant]
-      : ButtonColorSchemes.disabled;
-
-    return (
-      <ButtonOrLink
-        {...props}
-        ref={ref}
-        disabled={isButtonDisabled || isLoading}
-        className={[
-          baseClassName,
-          borderRadius,
-          buttonSize,
-          cursor,
-          buttonColor,
-          buttonPadding,
-          className,
-        ].join(' ')}
-      >
-        {leftIcon &&
-          (typeof leftIcon === 'string' ? (
-            <Icon name={leftIcon as IconName} />
-          ) : (
-            leftIcon
-          ))}
-        {children && <span>{children}</span>}
-        {rightIcon &&
-          (typeof rightIcon === 'string' ? (
-            <Icon name={rightIcon as IconName} />
-          ) : (
-            rightIcon
-          ))}
-      </ButtonOrLink>
-    );
+  props: ButtonProps<TColorScheme> & {
+    ref?: React.Ref<HTMLButtonElement | HTMLAnchorElement>;
   }
-);
-Button.displayName = 'Button';
+) => ReturnType<typeof ButtonComponent>;
 
-type AnchorElement = React.AnchorHTMLAttributes<HTMLAnchorElement>;
-type ButtonElement = React.ButtonHTMLAttributes<HTMLButtonElement>;
+type AnchorElementProps = React.AnchorHTMLAttributes<HTMLAnchorElement>;
+type ButtonElementProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export type ButtonOrLinkProps = (AnchorElement | ButtonElement) & {
+export type ButtonOrLinkProps = (AnchorElementProps | ButtonElementProps) & {
   href?: string;
-  target?: AnchorElement['target'];
+  target?: AnchorElementProps['target'];
 };
 
 export const ButtonOrLink = React.forwardRef<
@@ -175,7 +179,7 @@ export const ButtonOrLink = React.forwardRef<
         href={href}
         target={target}
         ref={ref as React.ForwardedRef<HTMLAnchorElement>}
-        {...(props as AnchorElement)}
+        {...(props as AnchorElementProps)}
       >
         {children}
       </Link>
@@ -184,8 +188,8 @@ export const ButtonOrLink = React.forwardRef<
   return (
     <button
       ref={ref as React.ForwardedRef<HTMLButtonElement>}
-      type={type as ButtonElement['type']}
-      {...(props as ButtonElement)}
+      type={type as ButtonElementProps['type']}
+      {...(props as ButtonElementProps)}
     >
       {children}
     </button>

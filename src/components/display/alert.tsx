@@ -1,10 +1,10 @@
 import { Icon, IconName } from '..';
 
 export interface AlertProps {
-  colorScheme: keyof typeof AlertColors;
+  colorScheme?: keyof typeof AlertColors;
   className?: string;
   description?: React.ReactNode;
-  icon?: IconName | React.ReactNode;
+  icon?: IconName | React.JSX.Element;
   title?: React.ReactNode;
 }
 

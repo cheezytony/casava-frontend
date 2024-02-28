@@ -7,7 +7,7 @@ export interface StatisticProps {
   orientation?: 'horizontal' | 'vertical';
   heading?: React.ReactNode;
   format?: DataFormat;
-  value?: string | number;
+  value?: string | number | Date | null;
 }
 
 export const Statistic: React.FC<StatisticProps> = ({
@@ -22,7 +22,7 @@ export const Statistic: React.FC<StatisticProps> = ({
     if (format && value) {
       return formatData(value, format) as string;
     }
-    return value;
+    return value as string | number;
   }, [format, value]);
   return (
     <div className={`flex ${flexDirection} ${className}`}>

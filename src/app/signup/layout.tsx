@@ -3,15 +3,16 @@
 import React from 'react';
 import { SignupHeader } from './header';
 import { SignupFooter } from './footer';
-import { OnboardingContext } from '@/contexts/OnboardingContext';
+import { OnboardingContext, OnboardingNextAction } from '@/contexts/OnboardingContext';
 import { InsuranceProduct, PlanFrequency } from '../../../types';
 
 export default function SignupLayout({ children }: React.PropsWithChildren) {
+  const [isFlush, setIsFlush] = React.useState(false);
   const [canRestart, setCanRestart] = React.useState(false);
-  const [canGoForward, setCanGoForward] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [previousPage, setPreviousPage] = React.useState<string | null>(null);
-  const [nextPage, setNextPage] = React.useState<string | null>(null);
+  const [nextAction, setNextAction] = React.useState<OnboardingNextAction | null>(null)
+  const canShowFooter = React.useMemo(() => !!nextAction, [nextAction]);
 
   const [insuranceProduct, setInsuranceProduct] =
     React.useState<InsuranceProduct | null>(null);
@@ -41,22 +42,25 @@ export default function SignupLayout({ children }: React.PropsWithChildren) {
     setCanRestart(false);
     setProgress(0);
     setPreviousPage(null);
-    setNextPage(null);
+    setNextAction(null);
     setInsuranceProduct(null);
     setState('');
     setLga(null);
     setHospital(null);
     setBeneficiaries([]);
   };
+  
   return (
     <OnboardingContext.Provider
       value={{
+        isFlush,
+        setIsFlush,
+
+        canShowFooter,
+
         canRestart,
         setCanRestart,
         restart,
-
-        canGoForward,
-        setCanGoForward,
 
         progress,
         setProgress,
@@ -64,8 +68,8 @@ export default function SignupLayout({ children }: React.PropsWithChildren) {
         previousPage,
         setPreviousPage,
 
-        nextPage,
-        setNextPage,
+        nextAction,
+        setNextAction,
 
         insuranceProduct,
         setInsuranceProduct,
@@ -94,13 +98,18 @@ export default function SignupLayout({ children }: React.PropsWithChildren) {
         setPlanFrequency,
       }}
     >
-      <div className={`${nextPage ? 'pb-[5.3125rem]' : ''} pt-[65px]`}>
+      <div className={`${!!canShowFooter ? 'pb-[5.3125rem]' : ''} pt-[65px]`}>
         <SignupHeader />
-        <main className="px-md py-xl max-w-[1200px] mx-auto w-full">
+
+        <main
+          className={`w-full ${
+            !isFlush ? 'max-w-[1200px] mx-auto px-md py-xl' : ''
+          }`}
+        >
           {children}
         </main>
         <SignupFooter />
       </div>
     </OnboardingContext.Provider>
   );
-};
+}

@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   Dropdown,
+  DropdownIcon,
   Heading,
   Icon,
   Paragraph,
@@ -229,14 +230,16 @@ export const PlanCoverage: React.FC = () => {
         </Button>
         <div className="flex items-center justify-center gap-[18px]">
           <span>Set Your State Date</span>
-          <Dropdown>
-            <Button
-              rightIcon={<Icon name="IconChevronDown" size={16} />}
-              variant="ghost"
-            >
-              15/01/2024
-            </Button>
-          </Dropdown>
+          <Dropdown
+            label={
+              <Button
+                rightIcon={<DropdownIcon size={16} />}
+                variant="ghost"
+              >
+                15/01/2024
+              </Button>
+            }
+          />
         </div>
       </Width>
     </Width>

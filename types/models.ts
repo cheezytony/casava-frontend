@@ -2,7 +2,7 @@ interface Beneficiary {
   firstName: string;
   lastName: string;
   relationship: string;
-  dateOfBirth: string;
+  dateOfBirth: Date;
 }
 
 interface Customer {

@@ -1,3 +1,32 @@
+export interface StringInterface extends String {}
+// Warning this type may NOT work with any thing that requires a primitive string type.
+// However, it can be used with `as string` to convert it to a string.
+// It should only be used to specify arguments that can be a string or a union of strings
+// and not variables or properties that hold a string value.
+export type StringOrUnion<Union extends string> = StringInterface | Union;
+
+// Comment out the code below to see the error
+// Type 'StringOrUnion<"date">' is not assignable to type 'string'.
+//   Type 'StringInterface' is not assignable to type 'string'
+// const stringOrUnion: StringOrUnion<'date'> = 'date';
+// const string: string = stringOrUnion;
+
+// This is how to use the StringOrUnion type
+// function testStringUnionType(string: StringOrUnion<'date'>) {
+//   console.log(string);
+// }
+// testStringUnionType('date'); // This works fine
+// testStringUnionType('plain string'); // This works fine as well.
+
+// This is where issues may arise.
+// function testPlainStringType(string: string) {
+//   console.log(string);
+// }
+// testPlainStringType('plain string'); // This works fine
+// const string: StringOrUnion<'date'> = 'date';
+// testPlainStringType(string); // This will throw an error
+// testPlainStringType(string as string); // This fixes the error
+
 export const breakString = (string: string) => {
   return string
     .replace(/([\sA-Z_-])/g, (match) => {
@@ -59,10 +88,10 @@ export const truncate = (string: string, length = 30, after = '...') => {
   return string.slice(0, length) + after;
 };
 
-export const reverse = (string: string) => [...string].reverse().join('');
+export const reverse = (string: string) => string.split('').reverse().join('');
 
 export const queryToObject = <T = Record<string, string>>(
-  string: string,
+  string: string
 ): T => {
   return string
     .trim()
@@ -88,4 +117,4 @@ export const nameToInitials = (string: string, max = 2) => {
     .map((word) => word[0])
     .slice(0, max)
     .join('');
-}
+};

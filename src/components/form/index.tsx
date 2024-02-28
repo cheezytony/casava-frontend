@@ -2,6 +2,7 @@ import React from 'react';
 import { Icon } from '..';
 
 export * from './button';
+export * from './date';
 export * from './input';
 export * from './radio';
 export * from './select';

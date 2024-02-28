@@ -17,9 +17,12 @@ import { useOnboarding, usePayment } from '@/hooks';
 import { numberFormat } from '@/utils';
 import React from 'react';
 import { Hospital } from '../hospital/hospital';
+import { useAlert } from '@/contexts/AlertContext';
+import { useRouter } from 'next/navigation';
 
 export default function SignupSummaryPage() {
   const previousPage = '/signup/plan';
+  const router = useRouter();
   const {
     plan,
     planFrequency,
@@ -31,6 +34,7 @@ export default function SignupSummaryPage() {
   } = useOnboarding();
   const middleware = () => (!!plan && !!planFrequency);
   
+  const alert = useAlert();
   const pay = usePayment({
     amount: 3439.0,
     email: customer?.email!,
@@ -38,9 +42,15 @@ export default function SignupSummaryPage() {
     metadata: {},
     onClose: (response) => {
       console.log('onClose', response);
+      alert.error({
+        title: 'Payment failed!',
+        description:
+          'Your payment could not be processed due to insufficient balance.',
+      });
     },
     onSuccess: (response) => {
       console.log('onSuccess', response.reference);
+      router.push('/signup/kyc');
     },
   });
 

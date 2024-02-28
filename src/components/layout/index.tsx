@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface DividerProps {
   className?: string;
   size?: keyof typeof DividerSizes;
@@ -32,23 +34,26 @@ export interface WidthProps extends React.HTMLAttributes<HTMLDivElement> {
   yAuto?: boolean;
 }
 
-export const Width: React.FC<React.PropsWithChildren<WidthProps>> = ({
-  children,
-  max,
-  min,
-  width = '100%',
-  xAuto,
-  yAuto,
-  ...props
-}) => {
+export const Width = React.forwardRef<
+  HTMLDivElement,
+  React.PropsWithChildren<WidthProps>
+>(({ children, max, min, width = '100%', xAuto, yAuto, ...props }, ref) => {
   const xMargin = xAuto ? 'auto' : undefined;
   const yMargin = yAuto ? 'auto' : undefined;
   return (
     <div
       {...props}
-      style={{ maxWidth: max, minWidth: min, width, marginInline: xMargin, marginBlock: yMargin}}
+      ref={ref}
+      style={{
+        maxWidth: max,
+        minWidth: min,
+        width,
+        marginInline: xMargin,
+        marginBlock: yMargin,
+      }}
     >
       {children}
     </div>
   );
-};
+});
+Width.displayName = 'Width';

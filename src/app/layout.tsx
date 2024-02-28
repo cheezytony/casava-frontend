@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { AuthenticationContextProvider } from '../contexts/AuthenticationContext';
+import { AlertContextProvider } from '@/contexts/AlertContext';
+
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -16,7 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={''}>
         <AuthenticationContextProvider>
-          {children}
+          <AlertContextProvider>{children}</AlertContextProvider>
         </AuthenticationContextProvider>
       </body>
     </html>

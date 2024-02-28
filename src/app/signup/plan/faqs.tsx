@@ -1,5 +1,4 @@
-import { Heading, Paragraph, Width } from '@/components';
-import { Accordion } from '@/components/container/accordion';
+import { Accordion, Heading, Paragraph, Width } from '@/components';
 
 export const PlanFaqs = () => {
   const faqs = [
