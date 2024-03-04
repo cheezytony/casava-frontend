@@ -85,6 +85,24 @@ export const IconPencil = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+export const IconPerson = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M16.0001 14.6667C18.9456 14.6667 21.3334 12.2789 21.3334 9.33333C21.3334 6.38781 18.9456 4 16.0001 4C13.0546 4 10.6667 6.38781 10.6667 9.33333C10.6667 12.2789 13.0546 14.6667 16.0001 14.6667Z"
+      fill="currentColor"
+    />
+    <path
+      d="M7.07428 24C4.86549 27.5601 12.1771 29.3333 16.0001 29.3333C19.8231 29.3333 27.1347 27.5601 24.9259 24C23.2648 21.3228 19.9051 18.6667 16.0001 18.6667C12.095 18.6667 8.73532 21.3228 7.07428 24Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
 export const IconTrash = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 16 16"

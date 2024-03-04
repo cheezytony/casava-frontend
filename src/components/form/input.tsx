@@ -24,7 +24,11 @@ export const InputPaddings = {
   md: 'p-md',
 };
 
-export interface FormInputProps {
+export interface FormInputProps
+  extends Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    'size' | 'onChange'
+  > {
   className?: string;
   id?: string;
   isDisabled?: boolean;
@@ -108,13 +112,14 @@ export const FormPassword = forwardRef<
     },
     ref
   ) => {
+    const inputFont = InputFonts[size];
     const inputRef = React.useRef<HTMLInputElement>(null);
     const [showPassword, setShowPassword] = React.useState(false);
     const toggleShowPassword = () => {
       setShowPassword(!showPassword);
       inputRef.current?.focus();
-    }
-    
+    };
+
     return (
       <FormInputWrapper
         {...{
@@ -129,7 +134,7 @@ export const FormPassword = forwardRef<
           {...props}
           ref={useMergeRefs([ref, inputRef])}
           type={showPassword ? 'text' : 'password'}
-          className="border-0 outline-none p-0 w-full autofill:bg-black"
+          className={`border-0 outline-none p-0 w-full autofill:bg-black ${inputFont}`}
           onChange={(e) => onChange?.(e.target.value)}
           {...(isDisabled && { disabled: true })}
           {...(isReadOnly && { readOnly: true })}

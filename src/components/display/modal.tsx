@@ -100,6 +100,7 @@ export const Modal: React.FC<ModalProps> = ({
 export interface AlertModalProps extends ModalProps {
   uuid?: string;
   type?: keyof typeof AlertModalIconColorSchemes;
+  icon?: IconName | React.JSX.Element;
   title?: React.ReactNode;
   description?: React.ReactNode;
   duration?: number;
@@ -129,6 +130,7 @@ const AlertModalIconColorSchemes = {
 
 export const AlertModal: React.FC<AlertModalProps> = ({
   type = 'info',
+  icon,
   title,
   description,
   okText = 'Okay',
@@ -140,7 +142,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   onCancel,
   ...props
 }) => {
-  const alertIcon = AlertModalIcons[type];
+  const alertIcon = icon ?? AlertModalIcons[type];
   const alertColorScheme = AlertModalIconColorSchemes[type];
   const [isLoading, setIsLoading] = React.useState(false);
   const handleOnConfirm = async () => {
@@ -171,7 +173,12 @@ export const AlertModal: React.FC<AlertModalProps> = ({
           <div
             className={`h-[64px] w-[64px] grid place-items-center rounded-full ${alertColorScheme}`}
           >
-            <Icon name={alertIcon} size={32} />
+            {alertIcon &&
+              (typeof alertIcon === 'string' ? (
+                <Icon name={alertIcon} size={32} />
+              ) : (
+                alertIcon
+              ))}
           </div>
           {title && (
             <Heading as="h3" level={3}>

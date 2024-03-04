@@ -77,13 +77,13 @@ const ButtonPaddings = {
   xs: 'px-[4px] py-[6px]',
   sm: 'px-[8px] py-[8px]',
   md: 'px-[16px] py-[10px]',
-  lg: 'px-[32px] py-[14px]',
+  lg: 'px-[32px] py-[11px]',
 };
 const ButtonSizes = {
   xs: 'gap-xs text-xs leading-normal',
   sm: 'gap-xs text-sm leading-normal',
   md: 'gap-xs text-sm leading-normal',
-  lg: 'gap-xs text-lg leading-normal',
+  lg: 'gap-xs text-base leading-normal',
 };
 
 const ButtonComponent = (

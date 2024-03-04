@@ -1,182 +1,99 @@
 'use client';
 
-import { Button, Dropdown, FormGroup, FormInput } from '@/components';
+import {
+  Button,
+  Form,
+  FormGroup,
+  FormInput,
+  FormPassword,
+  Heading,
+  Icon,
+  Paragraph,
+} from '@/components';
+import { useAlert } from '@/contexts/AlertContext';
 import { useForm, useFormValidator } from '@/hooks';
+import Link from 'next/link';
 
 export default function LoginPage(): JSX.Element {
-  const { values, errors, setFieldValue } = useForm({
-    initialValues: { firstName: 'Antonio', lastName: 'Okoro', email: '', age: 25 },
+  const { confirm } = useAlert();
+  const { values, errors, setFieldValue, handleSubmit } = useForm({
+    initialValues: { email: '', password: '' },
     validation: {
-      firstName: useFormValidator().required()._alphabets.only(),
-      lastName: useFormValidator().required(),
-      email: useFormValidator().required()._string.email(),
-      age: useFormValidator().required()._number.min(18)._number.max(25),
+      email: useFormValidator().required(),
+      password: useFormValidator().required(),
+    },
+    onSubmit: (values, isValid) => {
+      if (!isValid) return;
+      confirm({
+        icon: <Icon name="IconPerson" className="text-black" size={32} />,
+        title: (
+          <div>
+            Glad you&apos;re back, <span className='text-pink-700'>Felix</span>
+          </div>
+        ),
+        description:
+          "You're almost done. Let's pick up right where you left off.",
+        showCancelButton: true,
+        okText: 'Continue',
+      });
     },
   });
-
-  const largeList = Array.from({ length: 100 }, (_, i) => ({
-    label: `Item ${i + 1}`,
-  }));
-  
   return (
-    <div className="p-10">
-      <h1>Login Page</h1>
-      <div className="flex flex-col items-start gap-5">
-        <div className="flex gap-4 w-full">
-          <FormGroup
-            className="w-full"
-            label="First Name"
-            errors={errors.firstName}
-            input={
-              <FormInput
-                placeholder="Enter First Name"
-                value={values.firstName}
-                onChange={(value) =>
-                  setFieldValue(
-                    'firstName',
-                    value.toString().replace(/[^a-zA-Z]/g, '')
-                  )
-                }
-              />
-            }
-          />
-          <FormGroup
-            className="w-full"
-            label="Last Name"
-            errors={errors.lastName}
-            input={
-              <FormInput
-                placeholder="Enter Last Name"
-                value={values.lastName}
-                onChange={(value) =>
-                  setFieldValue(
-                    'lastName',
-                    value.toString().replace(/[^a-zA-Z]/g, '')
-                  )
-                }
-              />
-            }
-          />
-          <FormGroup
-            className="w-full"
-            label="Email Address"
-            errors={errors.email}
-            input={
-              <FormInput
-                placeholder="Enter Email Address"
-                value={values.email}
-                onChange={(value) =>
-                  setFieldValue('email', value.toString().replace(/[\s]/g, ''))
-                }
-              />
-            }
-          />
-          <FormGroup
-            className="w-full"
-            label="Age"
-            errors={errors.age}
-            input={
-              <FormInput
-                type="number"
-                placeholder="Enter Age"
-                value={values.age}
-                onChange={(value) => setFieldValue('age', value as number)}
-              />
-            }
-          />
+    <div>
+      <Heading as="h1" level={1} className="mb-[4px]">
+        Welcome back! 👋🏾
+      </Heading>
+      <Paragraph className="mb-6 text-[#6B7280]">
+        Experience accessible and flexible insurance policies by signing into
+        your account.
+      </Paragraph>
+
+      <Form onSubmit={handleSubmit}>
+        <FormGroup
+          errors={errors.email}
+          className="mb-4"
+          label="Email address"
+          input={
+            <FormInput
+              name="email"
+              placeholder="Enter your email address"
+              value={values.email}
+              onChange={(value) => setFieldValue('email', value.toString())}
+            />
+          }
+        />
+        <FormGroup
+          errors={errors.password}
+          className="mb-[4px]"
+          label="Password"
+          input={
+            <FormPassword
+              autoComplete="current-password"
+              name="password"
+              placeholder="Enter your password"
+              value={values.password}
+              onChange={(value) => setFieldValue('password', value.toString())}
+            />
+          }
+        />
+        <div className="mb-6">
+          <Link
+            href="/auth/forgot-password"
+            className="text-pink-700 font-semibold text-sm"
+          >
+            Forgot Password?
+          </Link>
         </div>
-        <div className="flex gap-4 items-center">
-          <Button size="xs">Primary</Button>
-          <Button size="sm">Primary</Button>
-          <Button>Primary</Button>
-          <Button size="lg">Primary</Button>
+        <Button type="submit" size="lg" className="block w-full mb-6">
+          Login
+        </Button>
+        <div className="text-center text-sm text-[#667185]">
+          Don&apos;t have an account?{' '}
+          <Link href="/signup" className="text-pink-700 font-semibold">
+            Sign up
+          </Link>
         </div>
-        <div className="flex gap-4 items-center">
-          <Button colorScheme="secondary" size="xs">
-            Secondary
-          </Button>
-          <Button colorScheme="secondary" size="sm">
-            Secondary
-          </Button>
-          <Button colorScheme="secondary">Secondary</Button>
-          <Button colorScheme="secondary" size="lg">
-            Secondary
-          </Button>
-        </div>
-        <div className="flex gap-4 items-center">
-          <Button colorScheme="black" size="xs">
-            Black
-          </Button>
-          <Button colorScheme="black" size="sm">
-            Black
-          </Button>
-          <Button colorScheme="black">Black</Button>
-          <Button colorScheme="black" size="lg">
-            Black
-          </Button>
-        </div>
-        <div className="flex gap-4 items-center">
-          <Button variant="outline" size="xs">
-            Outline
-          </Button>
-          <Button variant="outline" size="sm">
-            Outline
-          </Button>
-          <Button variant="outline">Outline</Button>
-          <Button variant="outline" size="lg">
-            Outline
-          </Button>
-        </div>
-        <div className="flex gap-4 items-center">
-          <Button variant="link" size="xs">
-            Link
-          </Button>
-          <Button variant="link" size="sm">
-            Link
-          </Button>
-          <Button variant="link">Link</Button>
-          <Button variant="link" size="lg">
-            Link
-          </Button>
-        </div>
-        <div className="flex gap-4 items-center">
-          <Button colorScheme="primary" disabled size="xs">
-            Disabled
-          </Button>
-          <Button colorScheme="primary" disabled size="sm">
-            Disabled
-          </Button>
-          <Button colorScheme="primary" disabled>
-            Disabled
-          </Button>
-          <Button colorScheme="primary" disabled size="lg">
-            Disabled
-          </Button>
-        </div>
-        {/* <ButtonGroup>
-          <Button colorScheme="primary" variant="outline">
-            First
-          </Button>
-          <Button colorScheme="primary" variant="outline">
-            Second
-          </Button>
-          <Button colorScheme="primary" variant="outline" disabled>
-            Disabled
-          </Button>
-        </ButtonGroup>
-        <ButtonGroup size="xs">
-          <Button colorScheme="primary" variant="outline">
-            First
-          </Button>
-          <Button colorScheme="primary" variant="outline">
-            Second
-          </Button>
-          <Button colorScheme="primary" variant="outline" disabled>
-            Disabled
-          </Button>
-        </ButtonGroup> */}
-        <Dropdown label={<Button>Dropdown</Button>} items={[largeList]} selectedIndex={20} />
-      </div>
+      </Form>
     </div>
   );
 }

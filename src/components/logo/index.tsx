@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 
-export interface LogoProps {
+export interface LogoProps extends React.SVGProps<SVGSVGElement> {
   color?: 'pink' | 'black' | 'white';
 }
 
-export const Logo: React.FC<LogoProps> = ({ color = 'pink' }) => {
+export const Logo: React.FC<LogoProps> = ({ color = 'pink', ...props }) => {
   const logoColor = useMemo(() => {
     switch (color) {
       case 'black':
@@ -19,11 +19,10 @@ export const Logo: React.FC<LogoProps> = ({ color = 'pink' }) => {
   
   return (
     <svg
-      width="112"
-      height="25"
       viewBox="0 0 112 25"
       xmlns="http://www.w3.org/2000/svg"
       className={logoColor}
+      {...props}
     >
       <g clipPath="url(#clip0_5128_9601)">
         <path

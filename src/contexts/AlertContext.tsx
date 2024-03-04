@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 
 export type CreateAlertProps = Pick<
   AlertModalProps,
+  | 'icon'
   | 'type'
   | 'title'
   | 'description'
